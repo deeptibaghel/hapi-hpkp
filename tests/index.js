@@ -3,20 +3,19 @@ var hpkp = require('../lib/hpkp')
 var Hapi = require('hapi')
 var server
 
-function createServer(port, hpkpOptions) {
-  server = new Hapi.Server()
-  server.connection({
+async function createServer(port, hpkpOptions) {
+  server = new Hapi.Server({
     port: port
   })
 
-  server.register({
-    register: require('../index.js'),
-    options: hpkpOptions
-  }, function (err) {
-    if (err) {
-      console.error('Failed to load plugin:', err)
-    }
-  });
+  try{
+   await server.register({
+      plugin: require('../index.js'),
+      options: hpkpOptions
+    })
+  }catch(err){
+    console.error('Failed to load plugin:', err)
+  }
 
   server.route({
     method: 'GET',
@@ -26,8 +25,7 @@ function createServer(port, hpkpOptions) {
     }
   })
 
-  server.start()
-
+  await server.start()
   return server
 }
 
