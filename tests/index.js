@@ -86,10 +86,11 @@ describe('HPKP Headers', function () {
     }
     before(function () {
       server = createServer(3000, testCase.options)
+      return server
     })
 
     after(function () {
-      return server.stop()
+      server.root.stop()
     })
     it(testCase.name, function (done) {
       server.inject(requestOptions, function (response) {
