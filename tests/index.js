@@ -17,11 +17,11 @@ async function createServer(port, hpkpOptions) {
     console.error('Failed to load plugin:', err)
   }
 
-  server.route({
+  await server.route({
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-      return reply('HPKP!')
+      return 'HPKP!'
     }
   })
 
@@ -84,18 +84,14 @@ describe('HPKP Headers', function () {
       method: "GET",
       url: "/"
     }
-    before(function () {
-      server = createServer(3000, testCase.options)
-      return server
-    })
 
-    after(function () {
-      server.root.stop()
-    })
-    it(testCase.name, function (done) {
-      server.inject(requestOptions, function (response) {
-        assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
-        done()
+    it(testCase.name, function () {
+      return createServer(3000, testCase.options).then((s) => {
+        server = s
+        return server.inject(requestOptions).then((response) => {
+          assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
+          return server.stop()
+        })
       })
     })
   })
