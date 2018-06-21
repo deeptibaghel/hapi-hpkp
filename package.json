@@ -28,7 +28,7 @@
     "chai": "4.1.2",
     "eslint-config-fxa": "2.1.0",
     "eslint-plugin-fxa": "git+https://github.com/mozilla/eslint-plugin-fxa#master",
-    "hapi": "17.4.0",
+    "hapi": "17.5.1",
     "grunt": "1.0.1",
     "grunt-eslint": "19.0.0",
     "grunt-jscs": "3.0.1",

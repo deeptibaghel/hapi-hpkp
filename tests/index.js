@@ -13,14 +13,14 @@ async function createServer(port, hpkpOptions) {
       plugin: require('../index.js'),
       options: hpkpOptions
     })
-  }catch(err){
+  } catch(err) {
     console.error('Failed to load plugin:', err)
   }
 
-  await server.route({
+   server.route({
     method: 'GET',
     path: '/',
-    handler: function (request, reply) {
+    handler: async function (request, reply) {
       return 'HPKP!'
     }
   })
@@ -78,27 +78,28 @@ var passingTestCases = [
 ]
 
 passingTestCases.forEach(function (testCase) {
-	describe('HPKP Headers ' + testCase.name, function () {
-		var server
-		var requestOptions = {
-			method: "GET",
-			url: "/"
-		}
-		before(function () {
-			server = createServer(3000, testCase.options)
-		})
+  describe('HPKP Headers ' + testCase.name, function () {
+    var server
+    var requestOptions = {
+      method: "GET",
+      url: "/"
+    }
+    before(async function () {
+      server = await createServer(3000, testCase.options)
+      return server
+    })
 
-		after(function () {
-			return server.stop()
-		})
-		it(testCase.name, function (done) {
-			server.inject(requestOptions, function (response) {
-				assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
-				done()
-			})
-		})
-	})
+    after(function () {
+      server.stop()
+    })
+    it(testCase.name, () => {
+      server.inject(requestOptions, function (response) {
+      assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
+     })
+    })
+  })
 })
+
 
 var failingTestCases = [
   {
