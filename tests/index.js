@@ -17,7 +17,7 @@ async function createServer(port, hpkpOptions) {
     console.error('Failed to load plugin:', err)
   }
 
-   server.route({
+  server.route({
     method: 'GET',
     path: '/',
     handler: async function (request, reply) {
