@@ -77,24 +77,27 @@ var passingTestCases = [
   }
 ]
 
-describe('HPKP Headers', function () {
-  passingTestCases.forEach(function (testCase) {
-    var server
-    var requestOptions = {
-      method: "GET",
-      url: "/"
-    }
+passingTestCases.forEach(function (testCase) {
+	describe('HPKP Headers ' + testCase.name, function () {
+		var server
+		var requestOptions = {
+			method: "GET",
+			url: "/"
+		}
+		before(function () {
+			server = createServer(3000, testCase.options)
+		})
 
-    it(testCase.name, function () {
-      return createServer(3000, testCase.options).then((s) => {
-        server = s
-        return server.inject(requestOptions).then((response) => {
-          assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
-          return server.stop()
-        })
-      })
-    })
-  })
+		after(function () {
+			return server.stop()
+		})
+		it(testCase.name, function (done) {
+			server.inject(requestOptions, function (response) {
+				assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
+				done()
+			})
+		})
+	})
 })
 
 var failingTestCases = [
@@ -120,12 +123,13 @@ var failingTestCases = [
   }
 ]
 
+
 describe('HPKP Config', function () {
-  failingTestCases.forEach(function (testCase) {
-    it(testCase.name, function () {
-      assert.throws(function () {
-        hpkp(testCase.options)
-      }, testCase.message, 'threw error')
-    })
-  })
+	failingTestCases.forEach(function (testCase) {
+		it(testCase.name, function () {
+			assert.throws(function () {
+				hpkp(testCase.options)
+			}, testCase.message, 'threw error')
+		})
+	})
 })
