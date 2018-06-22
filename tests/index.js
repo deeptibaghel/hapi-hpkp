@@ -8,7 +8,7 @@ async function createServer(port, hpkpOptions) {
     port: port
   })
 
-  try{
+  try {
    await server.register({
       plugin: require('../index.js'),
       options: hpkpOptions
@@ -20,7 +20,7 @@ async function createServer(port, hpkpOptions) {
   server.route({
     method: 'GET',
     path: '/',
-    handler: async function (request, reply) {
+    handler: async function (request, h) {
       return 'HPKP!'
     }
   })
@@ -84,6 +84,7 @@ passingTestCases.forEach(function (testCase) {
       method: "GET",
       url: "/"
     }
+
     before(async function () {
       server = await createServer(3000, testCase.options)
       return server
@@ -92,6 +93,7 @@ passingTestCases.forEach(function (testCase) {
     after(function () {
       server.stop()
     })
+
     it(testCase.name, () => {
       server.inject(requestOptions, function (response) {
       assert.equal(response.headers[testCase.expectedKey], testCase.expectedHeader)
@@ -99,7 +101,6 @@ passingTestCases.forEach(function (testCase) {
     })
   })
 })
-
 
 var failingTestCases = [
   {

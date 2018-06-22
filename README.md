@@ -18,12 +18,12 @@ var hpkpOptions = {
 var server = new Hapi.Server()
 
 // Register HPKP plugin
-server.register({
-  register: hpkp,
-  options: hpkpOptions
-}, function (err) {
-  if (err) {
+try {
+    server.register({
+      plugin: require('../index.js'),
+      options: hpkpOptions
+    })
+} catch(err) {
     console.error('Failed to load plugin:', err)
-  }
-})
+}
 ```
