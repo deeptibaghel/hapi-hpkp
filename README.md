@@ -21,7 +21,7 @@ var server = new Hapi.Server()
 async () => {
     try {
         await server.register({
-          plugin: require('../index.js'),
+          plugin: hpkp,
           options: hpkpOptions
         })
     } catch(err) {
